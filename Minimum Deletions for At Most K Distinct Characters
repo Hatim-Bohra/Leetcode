@@ -1,0 +1,18 @@
+class Solution {
+    public int minDeletion(String s, int k) {
+         Map<Character, Integer> frequencyMap = new HashMap<>();
+        for (char c : s.toCharArray()) {
+            frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
+        }
+        List<Integer> freqLst = new ArrayList<>(frequencyMap.values());
+        Collections.sort(freqLst, Collections.reverseOrder());
+        int delete = 0;
+        int numDist = freqLst.size();
+        if (numDist > k) {
+            for (int i = k; i < numDist; i++) {
+                delete += freqLst.get(i);
+            }
+        }
+        return delete;
+    }
+}

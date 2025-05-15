@@ -1,0 +1,38 @@
+class Solution {
+    public int[][] specialGrid(int N) {
+         return build(N);
+    }
+
+    private int[][] build(int n) {
+        if (n == 0) {
+            return new int[][]{{0}};
+        }
+        int[][] smaller = build(n - 1);
+        int size = smaller.length;
+        int newSize = size * 2;
+        int[][] res = new int[newSize][newSize];
+        int ofst = size * size;
+        
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                res[i][j + size] = smaller[i][j];
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                res[i + size][j + size] = smaller[i][j] + ofst;
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                res[i + size][j] = smaller[i][j] + 2 * ofst;
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                res[i][j] = smaller[i][j] + 3 * ofst;
+            }
+        }
+        return res;
+    }
+}

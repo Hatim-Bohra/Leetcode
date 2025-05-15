@@ -1,0 +1,26 @@
+class Solution {
+    public String findCommonResponse(List<List<String>> responses) {
+        Map<String, Integer> freq = new HashMap<>();
+
+        for (List<String> dailyResponses : responses) {
+            Set<String> uniqSet = new HashSet<>(dailyResponses);
+            for (String response : uniqSet) {
+                freq.put(response, freq.getOrDefault(response, 0) + 1);
+            }
+        }
+        String res = null;
+        int maxFreq = 0;
+        
+        for (Map.Entry<String, Integer> entry : freq.entrySet()) {
+            String response = entry.getKey();
+            int freq1 = entry.getValue();
+
+            if (freq1 > maxFreq || (freq1 == maxFreq && response.compareTo(res) < 0)) {
+                res = response;
+                maxFreq = freq1;
+            }
+        }
+
+        return res;
+    }
+}

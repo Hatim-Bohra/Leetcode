@@ -1,0 +1,81 @@
+class Solution {
+
+    private boolean canAssign(int k, int[] tasks, int[] workers, int pills, int strength) {
+        int n = tasks.length;
+        int m = workers.length;
+
+        TreeMap<Integer, Integer> availableWorkers = new TreeMap<>();
+        for (int i = 0; i < k; i++) {
+            int workerStrength = workers[m - k + i];
+            availableWorkers.put(workerStrength, availableWorkers.getOrDefault(workerStrength, 0) + 1);
+        }
+
+        int pillsUsed = 0;
+
+        for (int i = k - 1; i >= 0; i--) {
+            int taskReq = tasks[i];
+
+            Map.Entry<Integer, Integer> suitableWorkerEntry = availableWorkers.ceilingEntry(taskReq);
+
+            if (suitableWorkerEntry != null) {
+                int workerStrength = suitableWorkerEntry.getKey();
+                removeWorker(availableWorkers, workerStrength);
+            } else {
+                if (pillsUsed >= pills) {
+                    return false;
+                }
+
+                long minStrengthNeeded = (long) taskReq - strength;
+                Map.Entry<Integer, Integer> pillWorkerEntry = availableWorkers.ceilingEntry((int)Math.max(0, minStrengthNeeded));
+
+                if (pillWorkerEntry != null) {
+                    int workerStrength = pillWorkerEntry.getKey();
+                    removeWorker(availableWorkers, workerStrength);
+                    pillsUsed++;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void removeWorker(TreeMap<Integer, Integer> map, int strength) {
+        int count = map.get(strength);
+        if (count == 1) {
+            map.remove(strength);
+        } else {
+            map.put(strength, count - 1);
+        }
+    }
+
+    public int maxTaskAssign(int[] tasks, int[] workers, int pills, int strength) {
+        int n = tasks.length;
+        int m = workers.length;
+
+        Arrays.sort(tasks);
+        Arrays.sort(workers);
+
+        int low = 0;
+        int high = Math.min(n, m);
+        int ans = 0;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (mid == 0) {
+                 ans = 0;
+                 low = 1;
+                 continue;
+            }
+
+            if (canAssign(mid, tasks, workers, pills, strength)) {
+                ans = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        return ans;
+    }
+}

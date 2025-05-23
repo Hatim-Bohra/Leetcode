@@ -1,0 +1,47 @@
+class Solution {
+    public int minSwaps(int[] nums) {
+        int n = nums.length;
+        int[][] valSum = new int[n][3];
+        for (int i = 0; i < n; i++) {
+            valSum[i][0] = i;
+            valSum[i][1] = digitSum(nums[i]);
+            valSum[i][2] = nums[i];
+        }
+        Arrays.sort(valSum, (a, b) -> {
+            if (a[1] != b[1]) {
+                return Integer.compare(a[1], b[1]);
+            } else {
+                return Integer.compare(a[2], b[2]);
+            }
+        });
+        int[] idxMap = new int[n];
+        for (int i = 0; i < n; i++) {
+            idxMap[valSum[i][0]] = i;
+        }
+        boolean[] visit = new boolean[n];
+        int swap = 0;
+        for (int i = 0; i < n; i++) {
+            if (visit[i] || idxMap[i] == i) continue;
+            
+            int cycle = 0;
+            int j = i;
+            while (!visit[j]) {
+                visit[j] = true;
+                j = idxMap[j];
+                cycle++;
+            }
+            if (cycle > 1) {
+                swap += cycle - 1;
+            }
+        }
+        return swap;
+    }
+    public int digitSum(int num) {
+        int sum = 0;
+        while (num > 0) {
+            sum += num % 10;
+            num /= 10;
+        }
+        return sum;
+    }
+}

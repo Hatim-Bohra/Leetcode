@@ -1,0 +1,19 @@
+class Solution {
+    public long minCuttingCost(int n, int m, int k) {
+        if (n <= k && m <= k) return 0;
+        long minCt = Long.MAX_VALUE;
+        for (int i = 1; i < n; i++) {
+            int a = i, b = n - i;
+            if (a <= k && b <= k && m <= k) {
+                minCt = Math.min(minCt, (long) a * b);
+            }
+        }
+        for (int i = 1; i < m; i++) {
+            int a = i, b = m - i;
+            if (a <= k && b <= k && n <= k) {
+                minCt = Math.min(minCt, (long) a * b);
+            }
+        }
+        return minCt;
+    }
+}

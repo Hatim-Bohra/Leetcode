@@ -1,0 +1,21 @@
+class Solution {
+    public String resultingString(String s) {
+        Deque<Character> st = new ArrayDeque<>();
+        for (char c : s.toCharArray()) {
+            if (!st.isEmpty() && isAdj(st.peek(), c)) {
+                st.pop();
+            } else {
+                st.push(c);
+            }
+        }
+        StringBuilder res = new StringBuilder();
+        for (char c : st) {
+            res.insert(0, c);
+        }
+        return res.toString();
+    }
+    public boolean isAdj(char a, char b) {
+        int dif = Math.abs(a - b);
+        return dif==1 || dif==25;
+    }
+}

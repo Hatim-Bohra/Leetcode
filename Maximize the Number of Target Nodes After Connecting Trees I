@@ -1,0 +1,65 @@
+class Solution {
+    public int[] maxTargetNodes(int[][] edges1, int[][] edges2, int k) {
+        int n = edges1.length + 1;
+        int m = edges2.length + 1;
+
+        List<Integer>[] tree1 = buildTree(n, edges1);
+        List<Integer>[] tree2 = buildTree(m, edges2);
+
+        int[] reachableInTree2 = new int[m];
+        for (int i = 0; i < m; i++) {
+            reachableInTree2[i] = bfsCount(tree2, i, k - 1);
+        }
+
+        int maxReachTree2 = 0;
+        for (int count : reachableInTree2) {
+            maxReachTree2 = Math.max(maxReachTree2, count);
+        }
+
+        int[] result = new int[n];
+        for (int i = 0; i < n; i++) {
+            int reachTree1 = bfsCount(tree1, i, k);
+            result[i] = reachTree1 + maxReachTree2;
+        }
+
+        return result;
+    }
+     private List<Integer>[] buildTree(int size, int[][] edges) {
+        List<Integer>[] tree = new ArrayList[size];
+        for (int i = 0; i < size; i++) {
+            tree[i] = new ArrayList<>();
+        }
+        for (int[] edge : edges) {
+            tree[edge[0]].add(edge[1]);
+            tree[edge[1]].add(edge[0]);
+        }
+        return tree;
+    }
+
+    private int bfsCount(List<Integer>[] tree, int start, int maxDist) {
+        if (maxDist < 0) return 0;
+
+        boolean[] visited = new boolean[tree.length];
+        Queue<int[]> queue = new LinkedList<>();
+        queue.offer(new int[]{start, 0});
+        visited[start] = true;
+
+        int count = 0;
+        while (!queue.isEmpty()) {
+            int[] node = queue.poll();
+            int curr = node[0];
+            int dist = node[1];
+            count++;
+
+            if (dist == maxDist) continue;
+
+            for (int neighbor : tree[curr]) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    queue.offer(new int[]{neighbor, dist + 1});
+                }
+            }
+        }
+        return count;
+    }
+}

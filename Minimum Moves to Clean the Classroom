@@ -1,0 +1,58 @@
+class Solution {
+    public int minMoves(String[] classroom, int energy) {
+        int m = classroom.length, n = classroom[0].length();
+        char[][] gr = new char[m][n];
+        int stX = 0, stY = 0;
+        List<int[]> lit = new ArrayList<>();
+        for (int i = 0; i < m; i++) {
+            gr[i] = classroom[i].toCharArray();
+            for (int j = 0; j < n; j++) {
+                if (gr[i][j] == 'S') {
+                    stX = i;
+                    stY = j;
+                } else if (gr[i][j] == 'L') {
+                    lit.add(new int[]{i, j});
+                }
+            }
+        }
+        Map<String, Integer> litIn = new HashMap<>();
+        for (int i = 0; i < lit.size(); i++) {
+            litIn.put(lit.get(i)[0] + "," + lit.get(i)[1], i);
+        }
+        int allCollectedMask = (1 << lit.size()) - 1;
+        Queue<int[]> que = new LinkedList<>();
+        que.offer(new int[]{stX, stY, energy, 0});
+        boolean[][][][] vis= new boolean[m][n][energy + 1][1 << lit.size()];
+        vis[stX][stY][energy][0] = true;
+        int[][] dirs = {{1,0}, {-1,0}, {0,1}, {0,-1}};
+        int mov = 0;
+        while (!que.isEmpty()) {
+            int size = que.size();
+            for (int s = 0; s < size; s++) {
+                int[] state = que.poll();
+                int x = state[0], y = state[1], en = state[2], mask = state[3];
+                if (mask == allCollectedMask) return mov;
+                if (gr[x][y] == 'R') {
+                    en = energy;
+                }
+                for (int[] d : dirs) {
+                    int nx = x + d[0], ny = y + d[1];
+                    int newEn = en - 1;
+                    if (nx >= 0 && nx < m && ny >= 0 && ny < n && newEn >= 0 && gr[nx][ny] != 'X') {
+                        int newMas = mask;
+                        if (gr[nx][ny] == 'L') {
+                            String key = nx + "," + ny;
+                            newMas |= (1 << litIn.get(key));
+                        }
+                        if (!vis[nx][ny][newEn][newMas]) {
+                            vis[nx][ny][newEn][newMas] = true;
+                            que.offer(new int[]{nx, ny, newEn, newMas});
+                        }
+                    }
+                }
+            }
+            mov++;
+        }
+        return -1;
+    }
+}

@@ -1,0 +1,29 @@
+class Solution {
+    public String robotWithString(String s) {
+        Stack<Character> robot=new Stack<>();
+        int[] freq=new int[26];
+        for(char c:s.toCharArray()){
+            freq[c-'a']++;
+        }
+        StringBuilder ans=new StringBuilder();
+        for(char c:s.toCharArray()){
+            robot.push(c);
+            freq[c-'a']--;
+            while(!robot.isEmpty() && robot.peek()<=smallestchar(freq)){
+                ans.append(robot.pop());
+            }
+        }
+        while(!robot.isEmpty()){
+            ans.append(robot.pop());
+        }
+        return ans.toString();
+    }
+    public static char smallestchar(int[] freq){
+        for(int i=0;i<26;i++){
+            if(freq[i]>0){
+                return (char)('a'+i);
+            }
+        }
+        return 'a';
+    }
+}

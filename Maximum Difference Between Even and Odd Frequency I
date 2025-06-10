@@ -1,0 +1,36 @@
+class Solution {
+    public int maxDifference(String s) {
+        int n = s.length();
+        int visited[] = new int [n];
+        int list[] = new int [n];
+        int v =0;
+
+        for(int i=0;i<n;i++){
+            visited[i]=0;
+        }
+        for(int i=0;i<n;i++){
+            int c=0;
+            if(visited[i]==1) continue;
+            for(int j=0;j<n;j++){
+                if(s.charAt(i)==s.charAt(j)){c++;visited[j]=1;}
+            }
+            list[v]=c;
+            v++;
+        }
+
+        int max = -200;
+        for(int i=0;i<v;i++){
+            for(int j=v-1;j>=0;j--){
+                if(list[i]%2==0 && list[j]%2!=0){
+                    int t = list[j]-list[i];
+                    if(t>max) max = t;
+                }
+                else  if(list[j]%2==0 && list[i]%2!=0){
+                    int t = list[i]-list[j];
+                    //if(t>max) max = t;
+                }
+            }
+        }
+        return max;
+    }
+}

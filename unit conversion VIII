@@ -1,0 +1,29 @@
+class Solution {
+    public int[] baseUnitConversions(int[][] conversions) {
+        int n = conversions.length + 1;
+        long md = 1_000_000_007;
+        List<List<int[]>> grph = new ArrayList<>();
+        
+        for (int i = 0; i < n; i++) grph.add(new ArrayList<>());
+        for (int[] conv : conversions) {
+            grph.get(conv[0]).add(new int[]{conv[1], conv[2]});
+        }
+
+        int[] res = new int[n];
+        Arrays.fill(res, -1);
+        res[0] = 1;
+        Queue<Integer> que = new LinkedList<>();
+        que.add(0);
+
+        while (!que.isEmpty()) {
+            int curr = que.poll();
+            for (int[] next : grph.get(curr)) {
+                int neighbor = next[0], factor = next[1];
+                res[neighbor] = (int)((1L * res[curr] * factor) % md);
+                que.add(neighbor);
+            }
+        }
+
+        return res;
+    }
+}

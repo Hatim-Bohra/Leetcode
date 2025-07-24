@@ -1,0 +1,56 @@
+class Solution {
+    
+    private int ans = Integer.MAX_VALUE;
+
+    private int helper(int src, ArrayList<Integer>[] graph, int[] arr, int par, int block, int xor1, int tot) {
+	
+        int myXOR = arr[src];
+        for (int nbr : graph[src]) {
+            if (nbr != par && nbr != block) {
+                int nbrXOR = helper(nbr, graph, arr, src, block, xor1, tot);
+				int xor2 = nbrXOR;
+				int xor3 = (tot ^ xor1) ^ xor2;
+                int max = Math.max(xor1, Math.max(xor2, xor3));
+                int min = Math.min(xor1, Math.min(xor2, xor3));
+                this.ans = Math.min(ans, max - min);
+				
+                myXOR ^= nbrXOR;
+            }
+        }
+        return myXOR;
+    }
+    
+    private int dfs(int src, ArrayList<Integer>[] graph, int[] arr, int par, int tot) { 
+        int myXOR = arr[src];
+        for (int nbr : graph[src]) {
+            if (nbr != par) { 
+                int nbrXOR = dfs(nbr, graph, arr, src, tot); 
+                helper(0, graph, arr, -1, nbr, nbrXOR, tot); 
+				
+				myXOR ^= nbrXOR;
+            }
+        }
+        return myXOR;
+    }
+    
+    public int minimumScore(int[] arr, int[][] edges) {
+        int n = arr.length;
+        ArrayList<Integer>[] graph = new ArrayList[n];
+        int tot = 0;
+        
+        for (int i = 0; i < n; i++) {
+            graph[i] = new ArrayList<>();
+            tot ^= arr[i];
+        }
+        for (int[] edge : edges) {
+            int u = edge[0], v = edge[1];
+            graph[u].add(v);
+            graph[v].add(u);
+        }
+        this.ans = Integer.MAX_VALUE;
+   
+        dfs(0, graph, arr, -1, tot);
+        
+        return this.ans;
+    }
+}

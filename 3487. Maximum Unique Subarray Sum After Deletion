@@ -1,0 +1,17 @@
+class Solution {
+    static boolean[] map = new boolean[101];
+
+    public int maxSum(int[] nums) {
+        boolean all = true;
+        int max = Integer.MIN_VALUE, sum = 0;
+        Arrays.fill(map, false);
+        for (int num : nums) {
+            all &= num < 0;
+            max = Math.max(max, num);
+            if (num < 0 || map[num]) continue;
+            map[num] = true;
+            sum += num;
+        }
+        return all ? max : sum;
+    }
+}

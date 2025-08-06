@@ -1,0 +1,42 @@
+class Solution {
+    int[] segTree ;
+    void constructTree(int[] basket,int st,int end,int n){
+        if(st == end){
+            segTree[n] = basket[st];
+            return;
+        }
+        int mid = st +(end-st)/2;
+        constructTree(basket,st,mid,2*n);
+        constructTree(basket,mid+1,end,2*n+1);
+        segTree[n] = Math.max(segTree[2*n],segTree[2*n+1]);
+    }
+    int search(int n, int st, int end, int k) {
+        if (segTree[n] < k) return -1;
+        if (st == end) {
+            segTree[n] = -1;
+            return st;
+        }
+        int mid =st +(end-st)/2;
+        int pos = -1;
+        if (segTree[2 * n] >= k) {
+            pos = search(2 * n, st, mid, k);
+        } else {
+            pos = search(2 * n+ 1, mid + 1, end, k);
+        }
+        segTree[n] = Math.max(segTree[2 * n], segTree[2 * n + 1]);
+        return pos;
+    }
+
+    public int numOfUnplacedFruits(int[] fruits, int[] baskets) {
+        int n = fruits.length;
+        segTree = new int[4*n];
+        constructTree(baskets,0,n-1,1);
+        int ans= 0;
+        for (int i = 0; i < n; i++) {
+            int pos = search(1, 0, n - 1, fruits[i]);
+            if (pos == -1) 
+                ans++;
+        }
+        return ans;
+    }
+}

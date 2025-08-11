@@ -1,0 +1,26 @@
+class Solution {
+    public int[] productQueries(int n, int[][] queries) {
+        List<Integer> powers = new ArrayList<>();
+
+        while(n>=1){
+            int p = (int)(Math.log(n) / Math.log(2));
+            int power = (1 << p);
+            powers.add(power);
+            n -= power;
+        }
+        Collections.reverse(powers);
+        int len = queries.length;
+        int[] ans = new int[len];
+        for(int i=0;i<len;++i){
+            int l = queries[i][0];
+            int r = queries[i][1];
+            long product = 1;
+            for(int j=l;j<=r;++j){
+                product *= powers.get(j);
+                product %= 1000000007;
+            }
+            ans[i] = (int)product;
+        }
+        return ans;
+    }
+}

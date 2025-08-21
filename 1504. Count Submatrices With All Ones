@@ -1,0 +1,28 @@
+class Solution {
+    public int numSubmat(int[][] mat) {
+        int m = mat.length;
+        int n = mat[0].length;
+        int[][] ones = new int[m+1][n+1];
+        for (int i = 1; i < m+1; i++) {
+            for (int j = 1; j < n+1; j++) {
+                ones[i][j] = ones[i-1][j] + ones[i][j-1] - ones[i-1][j-1]
+                    + (mat[i-1][j-1]==1?1:0);
+            }
+        }
+        int count = 0;
+        for (int ai = 0; ai < m+1; ai++) {
+            for (int aj = 0; aj < n+1; aj++) {
+                for (int bi = ai + 1; bi < m+1; bi++) {
+                    for (int bj = aj + 1; bj < n+1; bj++) {
+                        if (ones[bi][bj] - ones[bi][aj] - ones[ai][bj] + ones[ai][aj]
+                           == (bi-ai) * (bj-aj)) {
+                            count++;
+                        }
+                    }
+                }
+
+            }
+        }
+        return count;
+    }
+}

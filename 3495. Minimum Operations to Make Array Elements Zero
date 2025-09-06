@@ -1,0 +1,37 @@
+class Solution {
+    public long minOperations(int[][] queries) {
+        long[] pow4 = new long[16];
+        pow4[0] = 1;
+        for(int i=1;i<pow4.length;i++){
+            pow4[i] = pow4[i-1]*4;
+        }
+
+        long total = 0;
+        for(int[] q:queries){
+            int l = q[0], r = q[1];
+            long sum = getSum(r, pow4) - getSum((long)l-1, pow4);
+            long ops = (sum+1)/2;
+            total += ops;
+        }
+
+        return total;
+    }
+
+    private long getSum(long n, long[] pow4){
+        if(n<=0) return 0;
+        long res = 0;
+
+        for(int k=1;k<pow4.length;k++){
+            long left = pow4[k-1];
+            long right = pow4[k]-1;
+            if(n<left){
+                break;
+            }
+            long cnt = Math.min(n, right)-left+1;
+            if(cnt > 0){
+                res +=cnt*k;
+            }
+        }
+        return res;
+    }
+}

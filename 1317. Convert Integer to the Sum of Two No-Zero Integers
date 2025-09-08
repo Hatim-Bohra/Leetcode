@@ -1,0 +1,25 @@
+class Solution {
+    public int[] getNoZeroIntegers(int n) {
+        return Generatearray(n-1,1);
+    }
+    private int[] Generatearray(int i,int j){
+        if(i==0||j==0){
+            return new int[]{-1,-1};
+        }
+        int n=i;
+        int w=j;
+        while(n>0){
+            if(n%10==0){
+                return Generatearray(i-1,j+1);
+            }
+            n/=10;
+        }
+        while(w>0){
+            if(w%10==0){
+                return Generatearray(i-1,j+1);
+            }
+            w/=10;
+        }
+        return new int[]{i,j};
+    }
+}

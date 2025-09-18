@@ -1,0 +1,82 @@
+class TaskManager {
+    private final Map<Integer, int[]> ids;
+    private final TreeMap<Integer, TreeSet<Integer>> priorities;
+
+    public TaskManager(final List<List<Integer>> tasks) {
+        ids = new HashMap<>();
+        priorities = new TreeMap<>();
+
+        for(final List<Integer> task : tasks) {
+           final int[] t = new int[] { task.get(0), task.get(1), task.get(2) };
+           ids.put(t[1], t);
+
+           priorities.putIfAbsent(t[2], new TreeSet<>());
+           priorities.get(t[2]).add(t[1]);
+        }
+    }
+    
+    public void add(final int userId, final int taskId, final int priority) {
+        final int[] task = new int[] { userId, taskId, priority };
+
+        ids.put(taskId, task);
+        priorities.putIfAbsent(task[2], new TreeSet<>());
+        priorities.get(task[2]).add(task[1]);
+    }
+    
+    public void edit(final int taskId, final int newPriority) {
+        final int[] task = ids.get(taskId);
+
+        priorities.get(task[2]).remove(taskId);
+
+        if(priorities.get(task[2]).isEmpty())
+            priorities.remove(task[2]);
+
+        task[2] = newPriority;
+
+        priorities.putIfAbsent(newPriority, new TreeSet<>());
+        priorities.get(newPriority).add(task[1]);
+    }
+    
+    public void rmv(final int taskId) {
+        final int[] task = ids.get(taskId);
+
+        ids.remove(taskId);
+        priorities.get(task[2]).remove(taskId);
+
+        if(priorities.get(task[2]).isEmpty())
+            priorities.remove(task[2]);
+    }
+    
+    public int execTop() {
+        if(ids.isEmpty())
+            return -1;
+
+        final int taskId = priorities.lastEntry().getValue().last();
+        final int[] task = ids.get(taskId);
+
+        rmv(taskId);
+
+        return task[0];
+    }
+
+    private final class Task {
+        public final int userId;
+        public final int id;
+        public int priority;
+
+        public Task(final int userId, final int id, final int priority) {
+            this.userId = userId;
+            this.id = id;
+            this.priority = priority;
+        }
+    }
+}
+
+/**
+ * Your TaskManager object will be instantiated and called as such:
+ * TaskManager obj = new TaskManager(tasks);
+ * obj.add(userId,taskId,priority);
+ * obj.edit(taskId,newPriority);
+ * obj.rmv(taskId);
+ * int param_4 = obj.execTop();
+ */
